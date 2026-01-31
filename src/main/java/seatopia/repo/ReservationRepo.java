@@ -142,10 +142,6 @@ public class ReservationRepo {
         }
     }
 
-    /**
-     * Schimbă statusul DOAR dacă statusul curent este expectedCurrent.
-     * Returnează true dacă update-ul s-a făcut, altfel false.
-     */
     public boolean updateStatusIfCurrent(int reservationId, ReservationStatus newStatus, ReservationStatus expectedCurrent)
             throws SQLException {
 
@@ -172,5 +168,34 @@ public class ReservationRepo {
                 rs.getInt("people_count"),
                 ReservationStatus.valueOf(rs.getString("status"))
         );
+    }
+    public boolean cancelIfPending(int reservationId, String message) throws SQLException {
+        String sql = """
+        UPDATE reservations
+        SET status = ?, cancel_message = ?
+        WHERE id = ? AND status = ?
+    """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, ReservationStatus.CANCELED.name());
+            stmt.setString(2, message);
+            stmt.setInt(3, reservationId);
+            stmt.setString(4, ReservationStatus.PENDING.name());
+
+            return stmt.executeUpdate() == 1;
+        }
+    }
+    public String getCancelMessage(int reservationId) throws SQLException {
+        String sql = "SELECT cancel_message FROM reservations WHERE id = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, reservationId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) return null;
+                return rs.getString("cancel_message");
+            }
+        }
     }
 }

@@ -1,0 +1,115 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-background-color: #0b1220;
+}
+
+.card {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-background-radius: 18px;
+    -fx-padding: 18px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0, 0, 8);
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #ffffff;
+}
+
+.subtitle {
+    -fx-text-fill: rgba(255,255,255,0.75);
+}
+
+.label {
+    -fx-text-fill: rgba(255,255,255,0.85);
+}
+
+.text-field, .password-field, .combo-box, .date-picker {
+    -fx-background-radius: 10px;
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: rgba(255,255,255,0.45);
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 10px;
+}
+
+.button {
+    -fx-background-radius: 10px;
+    -fx-padding: 8px 14px;
+    -fx-font-weight: 600;
+}
+
+.button.primary {
+    -fx-background-color: #4f8cff;
+    -fx-text-fill: #0b1220;
+}
+
+.button.secondary {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-text-fill: #ffffff;
+}
+
+.button.danger {
+    -fx-background-color: rgba(255, 80, 80, 0.95);
+    -fx-text-fill: white;
+}
+
+.message {
+    -fx-padding: 8px 10px;
+    -fx-background-radius: 10px;
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: rgba(255,255,255,0.9);
+}
+
+.hint {
+    -fx-text-fill: rgba(255,255,255,0.55);
+    -fx-font-size: 11px;
+}
+
+.separator *.line {
+    -fx-border-color: rgba(255,255,255,0.15);
+}
+
+.text-field, .password-field, .combo-box, .spinner, .date-picker, .text-area {
+    -fx-background-color: white;
+    -fx-text-fill: #111;
+    -fx-prompt-text-fill: #666;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #111;
+}
+
+.spinner .text-field {
+    -fx-text-fill: #111;
+    -fx-background-color: white;
+}
+
+.date-picker .text-field {
+    -fx-text-fill: #111;
+    -fx-background-color: white;
+}
+
+
+.label {
+    -fx-text-fill: #111;
+}
+/* Labels inside dark cards/topbar should be light */
+.card .label {
+    -fx-text-fill: rgba(255, 255, 255, 0.88);
+}
+
+/* Small helper labels (Data/Ora/Nr persoane) slightly dimmer */
+.card .label {
+    /* keep same, but you can uncomment the next line if you want them a bit softer */
+    /* -fx-text-fill: rgba(255,255,255,0.75); */
+}
+
+.h2 {
+    -fx-text-fill: rgba(255, 255, 255, 0.92);
+}
+
+.topbar .label {
+    -fx-text-fill: rgba(255, 255, 255, 0.92);
+}

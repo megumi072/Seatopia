@@ -2,14 +2,9 @@ package seatopia.ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import seatopia.model.UserRole;
 import seatopia.service.AuthService;
@@ -20,36 +15,70 @@ public class LoginView {
     private final AuthService authService = new AuthService();
 
     public LoginView(Stage stage) {
-        root.setPadding(new Insets(20));
+        root.setPadding(new Insets(24));
 
-        Label title = new Label("Seatopia - Login");
+        VBox card = new VBox(12);
+        card.getStyleClass().add("card");
+        card.setMaxWidth(520);
+
+        Label title = new Label("Seatopia");
+        title.getStyleClass().add("title");
+
+        Label subtitle = new Label("Autentifică-te sau creează un cont nou.");
+        subtitle.getStyleClass().add("subtitle");
 
         TextField emailField = new TextField();
+        emailField.setPromptText("Email (ex: nume@email.com)");
+
         PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Parolă");
 
         Label message = new Label();
+        message.getStyleClass().add("message");
+        message.setVisible(false);
+        message.setManaged(false);
+
 
         Button loginBtn = new Button("Login");
-        Button registerClientBtn = new Button("Register Client");
-        Button registerRestaurantBtn = new Button("Register Restaurant");
+        loginBtn.getStyleClass().addAll("button", "primary");
 
-        GridPane form = new GridPane();
-        form.setHgap(10);
-        form.setVgap(10);
+        Button registerClientBtn = new Button("Client");
+        registerClientBtn.getStyleClass().addAll("button", "secondary");
 
-        form.addRow(0, new Label("Email:"), emailField);
-        form.addRow(1, new Label("Parola:"), passwordField);
+        Button registerRestaurantBtn = new Button("Restaurant");
+        registerRestaurantBtn.getStyleClass().addAll("button", "secondary");
 
-        HBox buttons = new HBox(10, loginBtn, registerClientBtn, registerRestaurantBtn);
+        HBox registerRow = new HBox(10,
+                new Label("Creează cont:"),
+                registerClientBtn,
+                registerRestaurantBtn
+        );
+        registerRow.setPadding(new Insets(6, 0, 0, 0));
 
-        VBox box = new VBox(12, title, form, buttons, message);
-        box.setPadding(new Insets(10));
+        HBox buttons = new HBox(10, loginBtn);
+        buttons.setPadding(new Insets(6, 0, 0, 0));
 
-        root.setCenter(box);
+        card.getChildren().addAll(
+                title, subtitle, new Separator(),
+                new Label("Email"), emailField,
+                new Label("Parolă"), passwordField,
+                buttons,
+                registerRow,
+                message
+        );
+
+        StackPane center = new StackPane(card);
+        root.setCenter(center);
 
         loginBtn.setOnAction(e -> {
             try {
-                var session = authService.login(emailField.getText().trim(), passwordField.getText());
+                String email = emailField.getText().trim();
+                String pass = passwordField.getText();
+
+                if (email.isBlank()) throw new Exception("Email obligatoriu.");
+                if (pass == null || pass.isBlank()) throw new Exception("Parola obligatorie.");
+
+                var session = authService.login(email, pass);
 
                 if (session.getUser().getRole() == UserRole.CLIENT) {
                     stage.getScene().setRoot(new ClientView(stage, session).getRoot());
@@ -68,6 +97,9 @@ public class LoginView {
         registerRestaurantBtn.setOnAction(e ->
                 stage.getScene().setRoot(new RegisterRestaurantView(stage).getRoot())
         );
+
+        passwordField.setOnAction(e -> loginBtn.fire());
+        emailField.setOnAction(e -> loginBtn.fire());
     }
 
     public Parent getRoot() {

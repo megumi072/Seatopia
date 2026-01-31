@@ -14,9 +14,20 @@ public class SeatopiaApp extends Application {
 
         var loginView = new LoginView(stage);
         stage.setTitle("Seatopia");
-        stage.setScene(new Scene(loginView.getRoot(), 900, 600));
+
+        Scene scene = new Scene(loginView.getRoot(), 900, 600);
+
+        var css = getClass().getResource("/app.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        } else {
+            System.out.println("WARNING: app.css not found");
+        }
+
+        stage.setScene(scene);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);

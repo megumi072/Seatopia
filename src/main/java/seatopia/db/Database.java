@@ -11,8 +11,14 @@ public final class Database {
     private Database() {}
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL);
+        Connection conn = DriverManager.getConnection(URL);
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("PRAGMA foreign_keys = ON;");
+            stmt.execute("PRAGMA busy_timeout = 5000;");
+        }
+        return conn;
     }
+
 
     public static void init() {
         try (Connection conn = getConnection();
@@ -64,6 +70,11 @@ public final class Database {
                     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
                 );
             """);
+            stmt.execute("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS idx_tables_unique_name_per_restaurant
+                    ON tables(restaurant_id, name);
+            """);
+
 
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS reservations (
@@ -80,6 +91,10 @@ public final class Database {
                     FOREIGN KEY (client_id) REFERENCES clients(id)
                 );
             """);
+            try {
+                stmt.execute("ALTER TABLE reservations ADD COLUMN cancel_message TEXT;");
+            } catch (SQLException ignored) {
+            }
 
             System.out.println("Database initialized.");
 

@@ -73,4 +73,72 @@ public class TableRepo {
                 rs.getInt("active") == 1
         );
     }
+    public void update(int tableId, String name, int capacity) throws SQLException {
+        String sql = """
+        UPDATE tables
+        SET name = ?, capacity = ?
+        WHERE id = ?
+    """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, name);
+            stmt.setInt(2, capacity);
+            stmt.setInt(3, tableId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void deactivate(int tableId) throws SQLException {
+        String sql = "UPDATE tables SET active = 0 WHERE id = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, tableId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public boolean existsByRestaurantAndName(int restaurantId, String name) throws SQLException {
+        String sql = """
+        SELECT 1 FROM tables
+        WHERE restaurant_id = ?
+          AND lower(name) = lower(?)
+        LIMIT 1
+    """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, restaurantId);
+            stmt.setString(2, name);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public boolean existsByRestaurantAndNameExcludingId(int restaurantId, String name, int excludeTableId) throws SQLException {
+        String sql = """
+        SELECT 1 FROM tables
+        WHERE restaurant_id = ?
+          AND lower(name) = lower(?)
+          AND id <> ?
+        LIMIT 1
+    """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, restaurantId);
+            stmt.setString(2, name);
+            stmt.setInt(3, excludeTableId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
 }

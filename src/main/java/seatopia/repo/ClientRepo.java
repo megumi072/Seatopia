@@ -111,4 +111,24 @@ public class ClientRepo {
                 rs.getInt("completed_count")
         );
     }
+    public String findEmailByClientId(int clientId) throws SQLException {
+        String sql = """
+        SELECT u.email
+        FROM clients c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.id = ?
+    """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, clientId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) return null;
+                return rs.getString("email");
+            }
+        }
+    }
+
 }

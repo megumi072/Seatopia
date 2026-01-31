@@ -3,10 +3,7 @@ package seatopia.ui;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import seatopia.service.AuthService;
 
@@ -16,50 +13,85 @@ public class RegisterRestaurantView {
     private final AuthService authService = new AuthService();
 
     public RegisterRestaurantView(Stage stage) {
-        root.setPadding(new Insets(20));
+        root.setPadding(new Insets(24));
 
-        Label title = new Label("Register Restaurant");
+        Label title = new Label("Creează cont Restaurant");
+        title.getStyleClass().add("title");
 
         TextField emailField = new TextField();
+        emailField.setPromptText("ex: contact@restaurant.ro");
+
         PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("minim 6 caractere");
+
         TextField nameField = new TextField();
+        nameField.setPromptText("ex: Trattoria Roma");
+
         TextField addressField = new TextField();
+        addressField.setPromptText("ex: Str. Victoriei 10, București");
+
         TextField cuisineField = new TextField();
+        cuisineField.setPromptText("ex: Italian / Romanian / Sushi");
+
+        Label cuisineHint = new Label("Tip bucătărie: 1–3 cuvinte (ex: Italian, Asian Fusion).");
+        cuisineHint.getStyleClass().add("hint");
+
         TextField hoursField = new TextField();
+        hoursField.setPromptText("HH:MM-HH:MM (ex: 10:00-22:00)");
 
         Label message = new Label();
+        message.getStyleClass().add("message");
+        message.setVisible(false);
+        message.setManaged(false);
+
 
         Button registerBtn = new Button("Creează restaurant");
+        registerBtn.getStyleClass().addAll("button", "primary");
+
         Button backBtn = new Button("Înapoi");
-
-        GridPane form = new GridPane();
-        form.setHgap(10);
-        form.setVgap(10);
-
-        form.addRow(0, new Label("Email:"), emailField);
-        form.addRow(1, new Label("Parolă:"), passwordField);
-        form.addRow(2, new Label("Nume restaurant:"), nameField);
-        form.addRow(3, new Label("Adresă:"), addressField);
-        form.addRow(4, new Label("Tip bucătărie:"), cuisineField);
-        form.addRow(5, new Label("Program:"), hoursField);
+        backBtn.getStyleClass().addAll("button", "secondary");
 
         HBox buttons = new HBox(10, registerBtn, backBtn);
-        VBox box = new VBox(12, title, form, buttons, message);
-        box.setPadding(new Insets(10));
 
-        root.setCenter(box);
+        VBox card = new VBox(12,
+                title, new Separator(),
+                new Label("Email"), emailField,
+                new Label("Parolă"), passwordField,
+                new Separator(),
+                new Label("Nume restaurant"), nameField,
+                new Label("Adresă"), addressField,
+                new Label("Tip bucătărie"), cuisineField, cuisineHint,
+                new Label("Program"), hoursField,
+                buttons,
+                message
+        );
+        card.getStyleClass().add("card");
+        card.setMaxWidth(520);
+
+        root.setCenter(new StackPane(card));
 
         registerBtn.setOnAction(e -> {
             try {
-                var session = authService.registerRestaurant(
-                        emailField.getText().trim(),
-                        passwordField.getText(),
-                        nameField.getText().trim(),
-                        addressField.getText().trim(),
-                        cuisineField.getText().trim(),
-                        hoursField.getText().trim()
-                );
+                String email = emailField.getText().trim();
+                String pass = passwordField.getText();
+                String name = nameField.getText().trim();
+                String address = addressField.getText().trim();
+                String cuisine = cuisineField.getText().trim();
+                String hours = hoursField.getText().trim();
+                if (!isValidEmail(email)) {
+                    message.setText("Email invalid. Exemplu: nume@gmail.com");
+                    return;
+                }
+                if (email.isBlank()) throw new Exception("Email obligatoriu.");
+                if (pass == null || pass.length() < 6) throw new Exception("Parola trebuie să aibă minim 6 caractere.");
+                if (name.isBlank()) throw new Exception("Numele restaurantului este obligatoriu.");
+                if (address.isBlank()) throw new Exception("Adresa este obligatorie.");
 
+                if (!hours.matches("^([01]\\d|2[0-3]):[0-5]\\d-([01]\\d|2[0-3]):[0-5]\\d$")) {
+                    throw new Exception("Program invalid. Folosește HH:MM-HH:MM (ex: 10:00-22:00).");
+                }
+
+                var session = authService.registerRestaurant(email, pass, name, address, cuisine, hours);
                 stage.getScene().setRoot(new RestaurantView(stage, session).getRoot());
             } catch (Exception ex) {
                 message.setText("Eroare: " + ex.getMessage());
@@ -69,7 +101,17 @@ public class RegisterRestaurantView {
         backBtn.setOnAction(e ->
                 stage.getScene().setRoot(new LoginView(stage).getRoot())
         );
+
+        hoursField.setOnAction(e -> registerBtn.fire());
+        passwordField.setOnAction(e -> registerBtn.fire());
     }
+    private boolean isValidEmail(String email) {
+        if (email == null) return false;
+        String e = email.trim();
+        if (e.isEmpty()) return false;
+        return e.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$");
+    }
+
 
     public Parent getRoot() {
         return root;
