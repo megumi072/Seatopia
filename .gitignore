@@ -39,3 +39,6 @@ build/
 .DS_Store
 ### DB ###
 .db
+*.db
+.idea/
+target/

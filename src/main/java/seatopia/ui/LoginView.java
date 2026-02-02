@@ -33,10 +33,8 @@ public class LoginView {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Parolă");
 
-        Label message = new Label();
+        Label message = new Label(" ");
         message.getStyleClass().add("message");
-        message.setVisible(false);
-        message.setManaged(false);
 
 
         Button loginBtn = new Button("Login");

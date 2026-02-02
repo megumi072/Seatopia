@@ -100,11 +100,8 @@ public class ClientView {
         Button reserveBtn = new Button("Trimite cererea (PENDING)");
         reserveBtn.getStyleClass().addAll("button", "primary");
 
-        Label message = new Label();
+        Label message = new Label(" ");
         message.getStyleClass().add("message");
-        message.setVisible(false);
-        message.setManaged(false);
-
 
         Label formTitle = new Label("Creează rezervare");
         formTitle.getStyleClass().add("h2");

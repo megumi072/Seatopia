@@ -11,7 +11,6 @@ import seatopia.repo.TableRepo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.apache.commons.text.StringEscapeUtils;
 
 
 public class ReservationService {
@@ -118,7 +117,6 @@ public class ReservationService {
         String clientEmail = clientRepo.findEmailByClientId(r.getClientId());
         if (rest == null || clientEmail == null || clientEmail.isBlank()) return;
 
-        // 🔎 găsim masa ca să avem numele ei
         DiningTable table = null;
         for (DiningTable t : tableRepo.findActiveByRestaurantId(r.getRestaurantId())) {
             if (t.getId() == r.getTableId()) {
@@ -153,7 +151,7 @@ public class ReservationService {
                     <p style="margin:0;"><b>Data:</b> %s</p>
                     <p style="margin:0;"><b>Ora:</b> %s</p>
                     <p style="margin:0;"><b>Persoane:</b> %s</p>
-                    <p style="margin:0;"><b>Masa:</b> %s</p>
+                    <p style="margin:0;">%s</p>
                   </div>
     
                   <p style="margin-top:14px;">Vă așteptăm cu drag! 😊</p>
@@ -194,17 +192,18 @@ public class ReservationService {
         clientRepo.incrementNoShowAndUpdateRating(clientId);
     }
     public void cancelPendingReservation(int reservationId, String message) throws Exception {
-        if (message == null) message = "";
+        if (message == null)
+            message = "";
         message = message.trim();
         if (message.length() > 200) {
             message = message.substring(0, 200);
         }
-
         boolean ok = reservationRepo.cancelIfPending(reservationId, message);
         if (!ok) {
             throw new Exception("Doar rezervările PENDING pot fi anulate.");
         }
     }
+
     public void rejectPendingReservation(int reservationId, String message) throws Exception {
         if (message == null) message = "";
         message = message.trim();
@@ -224,8 +223,16 @@ public class ReservationService {
             }
         }
         var client = clientRepo.findById(r.getClientId());
-        String clientText = (client == null) ? ("clientId=" + r.getClientId())
-                : (client.getName() + " (" + client.getPhone() + ")");
+        String clientText;
+
+        if (client == null) {
+            clientText = "clientId=" + r.getClientId();
+        } else {
+            double rating = client.getRating();
+            String ratingText = String.format("%.1f★", rating);
+            clientText = client.getName() + " (" + client.getPhone() + ", " + ratingText + ")";
+        }
+
 
         String base = "#" + r.getId()
                 + " | " + r.getDateTime()

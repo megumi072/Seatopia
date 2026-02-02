@@ -24,7 +24,7 @@ public class MyReservationsView {
         Button backBtn = new Button("Înapoi");
         backBtn.getStyleClass().addAll("button", "secondary");
 
-        Button cancelBtn = new Button("Anulează (doar PENDING)");
+        Button cancelBtn = new Button("Anulează rezervarea");
         cancelBtn.getStyleClass().addAll("button", "danger");
 
         Region spacer = new Region();
@@ -54,10 +54,8 @@ public class MyReservationsView {
             }
         });
 
-        Label message = new Label();
+        Label message = new Label(" ");
         message.getStyleClass().add("message");
-        message.setVisible(false);
-        message.setManaged(false);
 
         VBox card = new VBox(10, list, message);
         card.getStyleClass().add("card");
@@ -73,34 +71,44 @@ public class MyReservationsView {
 
         cancelBtn.setDisable(true);
         list.getSelectionModel().selectedItemProperty().addListener((obs, oldV, r) -> {
-            cancelBtn.setDisable(r == null || r.getStatus() != ReservationStatus.PENDING);
+            if (r == null) {
+                cancelBtn.setDisable(true);
+                return;
+            }
+            boolean canCancel = r.getStatus() == ReservationStatus.PENDING
+                    || r.getStatus() == ReservationStatus.CONFIRMED;
+            cancelBtn.setDisable(!canCancel);
         });
 
         cancelBtn.setOnAction(e -> {
             Reservation r = list.getSelectionModel().getSelectedItem();
             if (r == null) {
-                message.setText("Selectează o rezervare.");
-                return;
-            }
-            if (r.getStatus() != ReservationStatus.PENDING) {
-                message.setText("Doar rezervările PENDING pot fi anulate.");
+                showMessage(message, "Selectează o rezervare.");
                 return;
             }
 
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Anulare rezervare");
-            dialog.setHeaderText("Mesaj (opțional) pentru anulare:");
-            dialog.setContentText("Mesaj:");
+            boolean canCancel = r.getStatus() == ReservationStatus.PENDING
+                    || r.getStatus() == ReservationStatus.CONFIRMED;
 
-            var result = dialog.showAndWait();
-            if (result.isEmpty()) return;
+            if (!canCancel) {
+                showMessage(message, "Rezervarea nu poate fi anulată (este deja finalizată/anulată).");
+                return;
+            }
+
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirmare anulare");
+            confirm.setHeaderText("Sigur vrei să anulezi rezervarea #" + r.getId() + "?");
+            confirm.setContentText("Rezervarea va fi marcată drept CANCELED.");
+
+            var result = confirm.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) return;
 
             try {
-                reservationService.cancelPendingReservation(r.getId(), result.get());
-                message.setText("Rezervarea #" + r.getId() + " a fost anulată.");
+                reservationService.cancelReservation(r.getId());
+                showMessage(message, "Rezervarea #" + r.getId() + " a fost anulată.");
                 refresh(list, message, session);
             } catch (Exception ex) {
-                message.setText("Eroare: " + ex.getMessage());
+                showMessage(message, "Eroare: " + ex.getMessage());
             }
         });
     }
@@ -109,10 +117,24 @@ public class MyReservationsView {
         try {
             list.getItems().setAll(reservationService.getClientReservations(session.getClientId()));
             list.getSelectionModel().clearSelection();
-            if (list.getItems().isEmpty()) message.setText("Nu ai rezervări încă.");
+
+            if (list.getItems().isEmpty()) {
+                showMessage(message, "Nu ai rezervări încă.");
+            } else {
+
+                message.setVisible(false);
+                message.setManaged(false);
+                message.setText("");
+            }
         } catch (Exception ex) {
-            message.setText("Eroare: " + ex.getMessage());
+            showMessage(message, "Eroare: " + ex.getMessage());
         }
+    }
+
+    private void showMessage(Label message, String text) {
+        message.setText(text);
+        message.setVisible(true);
+        message.setManaged(true);
     }
 
     public Parent getRoot() {

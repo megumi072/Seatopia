@@ -11,7 +11,6 @@ public class EmailService {
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
     private static final String API_URL = "https://api.resend.com/emails";
 
-
     private static final String FROM = "Seatopia <onboarding@resend.dev>";
 
     private String apiKey() {

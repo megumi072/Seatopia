@@ -30,10 +30,8 @@ public class RegisterClientView {
         TextField phoneField = new TextField();
         phoneField.setPromptText("07XXXXXXXX");
 
-        Label message = new Label();
+        Label message = new Label(" ");
         message.getStyleClass().add("message");
-        message.setVisible(false);
-        message.setManaged(false);
 
 
         Button registerBtn = new Button("Creează cont");
@@ -67,19 +65,37 @@ public class RegisterClientView {
                 String phone = phoneField.getText().trim();
 
                 if (!isValidEmail(email)) {
-                    message.setText("Email invalid. Exemplu: nume@gmail.com");
+                    showMessage(message, "Email invalid. Exemplu: nume@gmail.com");
                     return;
                 }
-                if (pass == null || pass.length() < 6) throw new Exception("Parola trebuie să aibă minim 6 caractere.");
-                if (name.isBlank()) throw new Exception("Numele este obligatoriu.");
-                if (!phone.matches("^07\\d{8}$")) throw new Exception("Telefon invalid. Exemplu: 07XXXXXXXX");
+                if (pass == null || pass.length() < 6) {
+                    showMessage(message, "Parola trebuie să aibă minim 6 caractere.");
+                    return;
+                }
+                if (name.isBlank()) {
+                    showMessage(message, "Numele este obligatoriu.");
+                    return;
+                }
+                if (!phone.matches("^07\\d{8}$")) {
+                    showMessage(message, "Telefon invalid. Exemplu: 07XXXXXXXX");
+                    return;
+                }
 
-                var session = authService.registerClient(email, pass, name, phone);
-                stage.getScene().setRoot(new ClientView(stage, session).getRoot());
+                authService.registerClient(email, pass, name, phone);
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Succes");
+                alert.setHeaderText("Cont creat cu succes!");
+                alert.setContentText("Te poți autentifica acum.");
+                alert.showAndWait();
+
+                stage.getScene().setRoot(new LoginView(stage).getRoot());
+
             } catch (Exception ex) {
-                message.setText("Eroare: " + ex.getMessage());
+                showMessage(message, "Eroare: " + ex.getMessage());
             }
         });
+
 
         backBtn.setOnAction(e ->
                 stage.getScene().setRoot(new LoginView(stage).getRoot())
@@ -88,6 +104,7 @@ public class RegisterClientView {
         phoneField.setOnAction(e -> registerBtn.fire());
         passwordField.setOnAction(e -> registerBtn.fire());
     }
+
     private boolean isValidEmail(String email) {
         if (email == null) return false;
         String e = email.trim();
@@ -95,6 +112,11 @@ public class RegisterClientView {
         return e.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$");
     }
 
+    private void showMessage(Label message, String text) {
+        message.setText(text);
+        message.setVisible(true);
+        message.setManaged(true);
+    }
 
     public Parent getRoot() {
         return root;
