@@ -1,314 +1,252 @@
-# \# 🍽 Seatopia – Sistem de rezervări restaurante
+#### \#  🍽 Seatopia – Sistem de rezervări restaurante
 
-# 
+#### 
 
-# Seatopia este o aplicație desktop dezvoltată în Java (JavaFX) care permite gestionarea rezervărilor la restaurante, oferind funcționalități atât pentru clienți, cât și pentru restaurante.
+#### Seatopia este o aplicație desktop dezvoltată în Java (JavaFX) care permite gestionarea rezervărilor la restaurante, oferind funcționalități atât pentru clienți, cât și pentru restaurante.
 
-# 
+#### 
 
-# ---
+#### ---
 
-# 
+#### 
 
-# \## 📌 Descrierea problemei abordate
+#### \##  📌 Descrierea problemei abordate
 
-# 
+#### 
 
-# În prezent, multe restaurante gestionează rezervările manual (telefonic, pe hârtie sau prin mesaje), ceea ce poate duce la:
+#### În prezent, multe restaurante gestionează rezervările manual (telefonic, pe hârtie sau prin mesaje), ceea ce poate duce la:
 
-# 
+#### 
 
-# \- suprapuneri de rezervări
+#### \- suprapuneri de rezervări
 
-# \- lipsa evidenței meselor disponibile
+#### \- lipsa evidenței meselor disponibile
 
-# \- dificultăți în comunicarea cu clienții
+#### \- dificultăți în comunicarea cu clienții
 
-# \- pierderea informațiilor despre rezervări
+#### \- pierderea informațiilor despre rezervări
 
-# 
+#### 
 
-# Seatopia rezolvă această problemă printr-un sistem centralizat care:
+#### Seatopia rezolvă această problemă printr-un sistem centralizat care:
 
-# 
+#### 
 
-# \- permite clienților să facă rezervări online
+#### \- permite clienților să facă rezervări online
 
-# \- permite restaurantelor să gestioneze mesele și rezervările
+#### \- permite restaurantelor să gestioneze mesele și rezervările
 
-# \- trimite notificări automate prin email
+#### \- trimite notificări automate prin email
 
-# 
+#### 
 
-# ---
+#### ---
 
-# 
+#### 
 
-# \## 🎯 Funcționalități implementate (Use Cases)
+#### \##  🎯 Funcționalități implementate (Use Cases)
 
-# 
+#### 
 
-# \### 👤 Client
+#### \###  👤 Client
 
-# 
+#### 
 
-# \- Creare cont client
+#### \- Creare cont client
 
-# \- Autentificare
+#### \- Autentificare
 
-# \- Vizualizare restaurante disponibile
+#### \- Vizualizare restaurante disponibile
 
-# \- Creare rezervare (dată, oră, număr persoane)
+#### \- Creare rezervare (dată, oră, număr persoane)
 
-# \- Vizualizare rezervările proprii
+#### \- Vizualizare rezervările proprii
 
-# \- Anulare rezervare
+#### \- Anulare rezervare
 
-# \- Primire email de confirmare a rezervării
+#### \- Primire email de confirmare a rezervării
 
-# 
+#### 
 
-# \### 🏬 Restaurant
+#### \###  🏬 Restaurant
 
-# 
+#### 
 
-# \- Creare cont restaurant
+#### \- Creare cont restaurant
 
-# \- Autentificare
+#### \- Autentificare
 
-# \- Adăugare mese (nume, capacitate)
+#### \- Adăugare mese (nume, capacitate)
 
-# \- Modificare și ștergere mese
+#### \- Modificare și ștergere mese
 
-# \- Vizualizare rezervări pe zile
+#### \- Vizualizare rezervări pe zile
 
-# \- Confirmare rezervări
+#### \- Confirmare rezervări
 
-# \- Respingere rezervări
+#### \- Respingere rezervări
 
-# \- Marcare rezervare ca COMPLETED sau NO\_SHOW
+#### \- Marcare rezervare ca COMPLETED sau NO\_SHOW
 
-# \- Vizualizare rating client înainte de acceptare
+#### \- Vizualizare rating client înainte de acceptare
 
-# 
+#### 
 
-# ---
+#### ---
 
-# 
+#### 
 
-# \## 🖥 Ecrane principale
+#### \##   🖥 Ecrane principale
 
-# 
+#### 
 
-# \- Login
+#### \- Login
 
-# \- Register Client
+#### \- Register Client
 
-# \- Register Restaurant
+#### \- Register Restaurant
 
-# \- Dashboard Client
+#### \- Dashboard Client
 
-# \- Dashboard Restaurant
+#### \- Dashboard Restaurant
 
-# \- Rezervările mele
+#### \- Rezervările mele
 
-# 
+#### 
 
-# ---
+#### ---
 
-# 
+#### 
 
-# \## 🏗 Arhitectura aplicației
+#### \##  🏗 Arhitectura aplicației
 
-# 
+#### 
 
-# Aplicația folosește arhitectura pe straturi (Layered Architecture):
+#### Aplicația folosește arhitectura pe straturi (Layered Architecture):
 
-# 
+#### 
 
-# \### 🔹 UI Layer
+#### \###  🔹 UI Layer
 
-# \- clase JavaFX (LoginView, ClientView, RestaurantView etc.)
+#### \- clase JavaFX (LoginView, ClientView, RestaurantView etc.)
 
-# 
+#### 
 
-# \### 🔹 Service Layer
+#### \###  🔹 Service Layer
 
-# \- AuthService
+#### \- AuthService
 
-# \- ReservationService
+#### \- ReservationService
 
-# \- EmailService  
+#### \- EmailService
 
-# 
+#### 
 
-# Conține logica aplicației.
+#### Conține logica aplicației.
 
-# 
+#### 
 
-# \### 🔹 Repository Layer
+#### \###  🔹 Repository Layer
 
-# \- ClientRepo
+#### \- ClientRepo
 
-# \- RestaurantRepo
+#### \- RestaurantRepo
 
-# \- TableRepo
+#### \- TableRepo
 
-# \- ReservationRepo  
+#### \- ReservationRepo
 
-# 
+#### 
 
-# Acces la baza de date SQLite.
+#### Acces la baza de date SQLite.
 
-# 
+#### 
 
-# \### 🔹 Model Layer
+#### \###  🔹 Model Layer
 
-# \- Client
+#### \- Client
 
-# \- Restaurant
+#### \- Restaurant
 
-# \- DiningTable
+#### \- DiningTable
 
-# \- Reservation
+#### \- Reservation
 
-# \- Enumeration: ReservationStatus
+#### \- Enumeration: ReservationStatus
 
-# 
+#### 
 
-# ---
+#### ---
 
-# 
+#### 
 
-# \## 📊 Diagrama de clase
+#### \##  ✉ API extern
 
-# 
+#### 
 
-# (diagrama UML care arată relațiile dintre Client, Restaurant, Reservation, DiningTable etc.)
+#### Aplicația integrează un serviciu de email (Resend API) pentru:
 
-# 
+#### 
 
-# ---
+#### \- email de bun venit la creare cont
 
-# 
+#### \- email de confirmare rezervare
 
-# \## 🗄 Baza de date
+#### 
 
-# 
+#### Protocol folosit: HTTPS (REST API)
 
-# Baza de date este realizată în SQLite și conține următoarele tabele:
+#### 
 
-# 
+#### ---
 
-# \- users
+#### 
 
-# \- clients
+#### \##  🧪 Testare
 
-# \- restaurants
+#### 
 
-# \- tables
+#### Proiectul conține teste unitare realizate cu JUnit pentru:
 
-# \- reservations
+#### 
 
+#### \- validări
 
+#### \- logica de rezervare
 
+#### \- servicii principale
 
+#### 
 
-## \## 🧩 Relații între entități
+#### ---
 
-## 
+#### 
 
-## | Entitate 1 | Cardinalitate | Entitate 2 |
+#### \##  🛠 Tehnologii folosite
 
-## |-----------|--------------|-----------|
+#### 
 
-## | USERS | 1 — 1 | CLIENTS |
+#### \- Java 25
 
-## | USERS | 1 — 1 | RESTAURANTS |
+#### \- JavaFX
 
-## | RESTAURANTS | 1 — \* | TABLES |
+#### \- SQLite
 
-## | RESTAURANTS | 1 — \* | RESERVATIONS |
+#### \- Maven
 
-## | CLIENTS | 1 — \* | RESERVATIONS |
+#### \- JUnit
 
-## | TABLES | 1 — \* | RESERVATIONS |
+#### \- Resend Email API
 
+#### 
 
+#### ---
 
-# ---
+#### 
 
-# 
+#### \##  👩‍💻 Autor
 
-# \## ✉ API extern
+#### 
 
-# 
-
-# Aplicația integrează un serviciu de email (Resend API) pentru:
-
-# 
-
-# \- email de bun venit la creare cont
-
-# \- email de confirmare rezervare
-
-# 
-
-# Protocol folosit: HTTPS (REST API)
-
-# 
-
-# ---
-
-# 
-
-# \## 🧪 Testare
-
-# 
-
-# Proiectul conține teste unitare realizate cu JUnit pentru:
-
-# 
-
-# \- validări
-
-# \- logica de rezervare
-
-# \- servicii principale
-
-# 
-
-# ---
-
-# 
-
-# \## 🛠 Tehnologii folosite
-
-# 
-
-# \- Java 25
-
-# \- JavaFX
-
-# \- SQLite
-
-# \- Maven
-
-# \- JUnit
-
-# \- Resend Email API
-
-# 
-
-# ---
-
-# 
-
-# \## 👩‍💻 Autor
-
-# 
-
-# Mădălina Todea
-
-
+#### Mădălina Todea
 
